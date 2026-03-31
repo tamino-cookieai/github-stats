@@ -1,4 +1,7 @@
 {
   "$schema": "./config.schema.json",
-  "exclude": ["tamino-cookieai/github-stats"]
+  "exclude": [
+    "tamino-cookieai/github-stats"
+  ],
+  "timeZone": "CET"
 }
