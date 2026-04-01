@@ -1,11 +1,4 @@
-import { createCipheriv, createDecipheriv, randomBytes } from "node:crypto";
-import { readFileSync, existsSync } from "node:fs";
-import { join } from "node:path";
-
-export const DATA_DIR = join(process.cwd(), "data");
-export const ENCRYPTED_PATH = join(DATA_DIR, "full.json.enc");
-export const STATS_PATH = join(DATA_DIR, "stats.json");
-export const COMMIT_MSG_PATH = join(DATA_DIR, "commit-message.txt");
+import { createCipheriv, createDecipheriv, createHash, randomBytes } from "node:crypto";
 
 const ALGORITHM = "aes-256-gcm";
 const IV_LENGTH = 12;
@@ -28,20 +21,9 @@ export function decrypt(data: Buffer, key: Buffer): Buffer {
   return Buffer.concat([decipher.update(ciphertext), decipher.final()]);
 }
 
-export interface Config {
-  timeZone?: string;
-  concurrency?: number;
-  maxRetries?: number;
-  skip?: {
-    organizations?: string[];
-    repositories?: string[];
-  };
-  exclude?: string[];
-}
-
-const CONFIG_PATH = join(process.cwd(), "config.json");
-
-export function loadConfig(): Config {
-  if (!existsSync(CONFIG_PATH)) return {};
-  return JSON.parse(readFileSync(CONFIG_PATH, "utf-8"));
+export function hashString(stringToHash: string): string {
+  if (stringToHash.startsWith("sha256:")) {
+    return stringToHash.slice(7);
+  }
+  return createHash("sha256").update(stringToHash).digest("hex");
 }
